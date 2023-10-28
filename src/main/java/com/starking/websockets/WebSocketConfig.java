@@ -16,16 +16,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		// TODO Auto-generated method stub
-		WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
+		registry.addEndpoint("/chat");
+		registry.addEndpoint("/chat").withSockJS();
 	}
 
 	@Override
-	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		// TODO Auto-generated method stub
-		WebSocketMessageBrokerConfigurer.super.configureMessageBroker(registry);
+	public void configureMessageBroker(MessageBrokerRegistry config) {
+		config.enableSimpleBroker("/topico");
+        config.setApplicationDestinationPrefixes("/app");
 	}
-	
-	
 
 }
