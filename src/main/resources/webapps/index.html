@@ -1,0 +1,99 @@
+<html>
+
+<head>
+	<title>Chat WebSocket</title>
+
+	<script src="resources/js/sockjs-0.3.4.js"></script>
+	<script src="resources/js/stomp.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+	<script type="text/javascript">
+
+		var stompClient = null;
+
+		function setConnected(connected) {
+
+			document.getElementById('connect').disabled = connected;
+			document.getElementById('disconnect').disabled = !connected;
+			document.getElementById('divConversa').style.visibility = connected ? 'visible' : 'hidden';
+			document.getElementById('resposta').innerHTML = '';
+		}
+
+		function connect() {
+
+			var socket = new SockJS('/chat'); // criação do objeto websocket 
+			stompClient = Stomp.over(socket); // conexão no endpoint "/chat"
+
+			stompClient.connect({}, (frame) => { // método connect(headers, connectCallback)
+
+				setConnected(true);
+				console.log('Conectado: ' + frame);
+				stompClient.subscribe('/topico/mensagens', (messageOutput) => {	// subscrição no tópico do servidor websocket e definição  
+					showMessageOutput(JSON.parse(messageOutput.body));          // da função de callback para quando o servidor enviar atualizações
+				});
+
+			});
+		}
+
+		function disconnect() {
+
+			if (stompClient != null) {
+				stompClient.disconnect();
+			}
+
+			setConnected(false);
+			console.log("Desconectado");
+		}
+
+		function enviarMsg() {
+
+			var origem = document.getElementById('origem').value;
+			var texto = document.getElementById('texto').value;
+			stompClient.send("/app/chat", {}, JSON.stringify({'origem': origem, 'texto': texto})); // envio da mensagem ao endpoint
+		}
+
+		function showMessageOutput(messageOutput) {
+
+			var response = document.getElementById('resposta');
+			var p = document.createElement('p');
+			p.style.wordWrap = 'break-word';
+			p.appendChild(document.createTextNode(messageOutput.origem + ": " + messageOutput.texto + " (" + messageOutput.horario + ")"));
+			response.appendChild(p);
+		}		
+
+	</script>
+
+</head>
+
+<body onload="disconnect()">
+
+	<div align="center">
+
+		<div>
+			<input type="text" id="origem" placeholder="Escolha um apelido" />
+		</div>
+		<br />
+		<div>
+			<button id="connect" onclick="connect();">Conectar</button>
+			<button id="disconnect" disabled="disabled" onclick="disconnect();">Desconectar</button>
+		</div>
+		<br />
+		<div id="divConversa">
+			<input type="text" id="texto" placeholder="Escreva uma mensagem..." />
+			<button id="enviarMsg" onclick="enviarMsg();">Enviar</button>
+			<p id="resposta"></p>
+		</div>
+		
+		<script>
+			$("#texto").keyup(function(event) {
+    		if (event.keyCode === 13) {
+        		$("#enviarMsg").click();
+    		}
+		});		
+		</script>
+
+	</div>
+
+</body>
+
+</html>
