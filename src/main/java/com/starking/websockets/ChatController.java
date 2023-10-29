@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ChatController {
 	
-	public MessagemProcessada send() throws Exception {
+	public MensagemProcessada send() throws Exception {
 		
 	}
 
