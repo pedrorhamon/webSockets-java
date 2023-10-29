@@ -8,5 +8,9 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class ChatController {
+	
+	public MessagemProcessada send() throws Exception {
+		
+	}
 
 }
