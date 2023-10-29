@@ -32,4 +32,10 @@ public class MensagemProcessada {
 	public void setHorario(String horario) {
 		this.horario = horario;
 	}
+
+	public MensagemProcessada(final String origem, final String texto, final String horario) {
+		this.origem = origem;
+		this.texto = texto;
+		this.horario = horario;
+	}
 }
